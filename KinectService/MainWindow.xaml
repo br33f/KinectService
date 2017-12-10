@@ -5,18 +5,27 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:KinectService"
         mc:Ignorable="d"
-        Title="KinectService" Height="250" Width="350">
+        Title="KinectService" Height="270" Width="350">
     <Grid>
         <StackPanel Orientation="Vertical" Margin="10">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Status połączenia z kontrolerem Kinect: "/>
-                <TextBlock Text="Niepołączono"/>
+                <TextBlock x:Name="kinectStatus" Text="Nie połączono" Foreground="#FFDC0000" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Status połączenia z aplikacją sterującą: "/>
-                <TextBlock Text="Niepołączono"/>
+                <TextBlock x:Name="controlStatus" Text="Nie połączono" Foreground="#FFDC0000"/>
             </StackPanel>
-            <TextBlock Margin="0, 10, 0, 0" Text="Podgląd z kamery" />
+            <TextBlock Margin="0, 10, 0, 0" Text="Baza gestów" Foreground="#FF959595" />
+            <ListView x:Name="lvGestures" Height="140" >
+            </ListView>
         </StackPanel>
+        <ListView x:Name="listView" HorizontalAlignment="Left" Height="100" Margin="500,140,-258,-21" VerticalAlignment="Top" Width="100">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn/>
+                </GridView>
+            </ListView.View>
+        </ListView>
     </Grid>
 </Window>
