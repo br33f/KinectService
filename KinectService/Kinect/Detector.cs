@@ -1,4 +1,5 @@
-﻿using Microsoft.Kinect;
+﻿using KinectService.Control;
+using Microsoft.Kinect;
 using Microsoft.Kinect.VisualGestureBuilder;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace KinectService.Kinect
         private Kinect.Connection KinectConnection { get; set; }
 
         // Confidence threshold
-        private readonly float CONFIDENCE_THRESHOLD = 0.7f;
+        private readonly float CONFIDENCE_THRESHOLD = 0.6f;
 
         // Gesture Recognition
         private VisualGestureBuilderFrameSource GestureFrameSource { get; set; }
@@ -26,14 +27,14 @@ namespace KinectService.Kinect
         public Dictionary<String, Gesture> GesturesDictionary { get; set; }
 
         // Pull detection threshold
-        private readonly float PULL_DETECTION_THRESHOLD = 0.25f;
+        private readonly float PULL_DETECTION_THRESHOLD = 0.15f;
 
         // Pull right
         private bool PullRightStarted = false;
         private float PullRightProgressAtStart;
 
         // Cross
-        private readonly int CROSS_DETECTION_THRESHOLD = 10;
+        private readonly int CROSS_DETECTION_THRESHOLD = 15;
         private bool CrossDetected = false;
         private int CrossDetectedInRow = 0;
 
@@ -127,12 +128,10 @@ namespace KinectService.Kinect
                         // Cross detection
                         if (crossResult.Detected && crossResult.Confidence > CONFIDENCE_THRESHOLD && !CrossDetected)
                         {
-                            CrossDetectedInRow++;
-                            if (CrossDetectedInRow == CROSS_DETECTION_THRESHOLD)
-                            {
-                                CrossDetected = true;
-                                Console.WriteLine("Cross");
-                            }
+                            CrossDetected = true;
+                            Console.WriteLine("Cross");
+                            ApplicationService.Instance.Cross();
+                            CrossDetectedInRow = CROSS_DETECTION_THRESHOLD;
                         } 
                         else if (!crossResult.Detected)
                         {
@@ -175,10 +174,12 @@ namespace KinectService.Kinect
                                 if (pullRightProgressAtEnd > PullRightProgressAtStart)
                                 {
                                     Console.WriteLine("Pulled Up");
+                                    ApplicationService.Instance.PullRight("up");
                                 }
                                 else
                                 {
                                     Console.WriteLine("Pulled down");
+                                    ApplicationService.Instance.PullRight("down");
                                 }
                             }
                         }

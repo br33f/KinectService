@@ -113,11 +113,13 @@ namespace KinectService.Control
 
         private void Ping(object source, ElapsedEventArgs e)
         {
-            Request request = new Request();
-            request.command = "Ping";
-            request.parameters = new Hashtable();
-            SendRequest(request);
-            Utils.LogLine("Ping");
+            if (OutputStreamWriter != null)
+            {
+                Request request = new Request();
+                request.command = "Ping";
+                request.parameters = new Hashtable();
+                SendRequest(request);
+            }
         }
 
         public void SendRequest(Request request)
@@ -178,6 +180,23 @@ namespace KinectService.Control
             request.command = "ServiceIsDown";
             request.parameters = new Hashtable();
             request.parameters.Add("serviceName", "IsKinectEnabled");
+            SendRequest(request);
+        }
+
+        public void PullRight(string direction)
+        {
+            Request request = new Request();
+            request.command = "PullRight";
+            request.parameters = new Hashtable();
+            request.parameters.Add("direction", direction);
+            SendRequest(request);
+        }
+
+        public void Cross()
+        {
+            Request request = new Request();
+            request.command = "Cross";
+            request.parameters = new Hashtable();
             SendRequest(request);
         }
 
