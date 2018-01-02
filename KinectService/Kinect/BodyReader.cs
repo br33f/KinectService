@@ -14,7 +14,8 @@ namespace KinectService.Kinect
         private BodyFrameSource BFSource { get; set; }
         private BodyFrameReader BFReader { get; set; }
         private Body[] Bodies { get; set; }
-        private Detector[] Detectors { get; set; }
+        private GestureDetector[] GestureDetectors { get; set; }
+        private JointDetector[] JointDetectors { get; set; }
 
         public BodyReader(Kinect.Connection kinectConnection)
         {
@@ -29,7 +30,8 @@ namespace KinectService.Kinect
         {
             for (int id = 0; id < BFSource.BodyCount; id++)
             {
-                Detectors[id].Dispose();
+                GestureDetectors[id].Dispose();
+                JointDetectors[id].Dispose();
             }
 
             BFReader.FrameArrived -= OnBodyFrameArrived;
@@ -38,10 +40,16 @@ namespace KinectService.Kinect
 
         private void InitializeDetectors()
         {
-            this.Detectors = new Detector[BFSource.BodyCount];
+            this.GestureDetectors = new GestureDetector[BFSource.BodyCount];
             for (int id = 0; id < BFSource.BodyCount; id++)
             {
-                this.Detectors[id] = new Detector(KinectConnection);
+                this.GestureDetectors[id] = new GestureDetector(KinectConnection);
+            }
+
+            this.JointDetectors = new JointDetector[BFSource.BodyCount];
+            for (int id = 0; id < BFSource.BodyCount; id++)
+            {
+                this.JointDetectors[id] = new JointDetector();
             }
         }
 
@@ -63,7 +71,8 @@ namespace KinectService.Kinect
 
                     for (int i = 0; i < BFSource.BodyCount; ++i)
                     {
-                        Detectors[i].TrackingID = Bodies[i].TrackingId;
+                        GestureDetectors[i].TrackingID = Bodies[i].TrackingId;
+                        JointDetectors[i].OnBodyUpdate(Bodies[i]);
                     }
                 }
             }

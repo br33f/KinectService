@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace KinectService.Kinect
 {
-    class Detector : IDisposable
+    class GestureDetector : IDisposable
     {
         private Kinect.Connection KinectConnection { get; set; }
 
@@ -25,13 +25,6 @@ namespace KinectService.Kinect
 
         // Gestures Dictionary
         public Dictionary<String, Gesture> GesturesDictionary { get; set; }
-
-        // Pull detection threshold
-        private readonly float PULL_DETECTION_THRESHOLD = 0.15f;
-
-        // Pull right
-        private bool PullRightStarted = false;
-        private float PullRightProgressAtStart;
 
         // Cross
         private readonly int CROSS_DETECTION_THRESHOLD = 15;
@@ -54,7 +47,7 @@ namespace KinectService.Kinect
             }
         }
 
-        public Detector(Kinect.Connection kinectConnection)
+        public GestureDetector(Kinect.Connection kinectConnection)
         {
             this.GesturesDictionary = new Dictionary<string, Gesture>();
 
@@ -117,10 +110,6 @@ namespace KinectService.Kinect
                     IReadOnlyDictionary<Gesture, ContinuousGestureResult> continuousResults = frame.ContinuousGestureResults;
                     if (discreteResults != null)
                     {
-                        // get results
-                        DiscreteGestureResult pullRightResult = null;
-                        discreteResults.TryGetValue(GesturesDictionary["Pull_Right"], out pullRightResult);
-
                         DiscreteGestureResult crossResult = null;
                         discreteResults.TryGetValue(GesturesDictionary["Cross"], out crossResult);
 
@@ -144,45 +133,6 @@ namespace KinectService.Kinect
                                 CrossDetectedInRow--;
                             }
                          }
-
-                        // Pull down detection
-                        if (pullRightResult.Detected && pullRightResult.Confidence > CONFIDENCE_THRESHOLD && PullRightStarted == false)
-                        {
-                            // On gesture start
-                            if (continuousResults != null)
-                            {
-                                ContinuousGestureResult pullProgressRightResult = null;
-                                continuousResults.TryGetValue(GesturesDictionary["PullProgress_Right"], out pullProgressRightResult);
-
-                                PullRightStarted = true;
-                                PullRightProgressAtStart = pullProgressRightResult.Progress;
-                            }
-
-                        }
-                        else if (!pullRightResult.Detected && PullRightStarted == true)
-                        {
-                            // On gesture end
-                            if (continuousResults != null)
-                            {
-                                ContinuousGestureResult pullProgressRightResult = null;
-                                continuousResults.TryGetValue(GesturesDictionary["PullProgress_Right"], out pullProgressRightResult);
-
-                                PullRightStarted = false;
-                                float pullRightProgressAtEnd = pullProgressRightResult.Progress;
-
-                                if (Math.Abs(pullRightProgressAtEnd - PullRightProgressAtStart) > PULL_DETECTION_THRESHOLD)
-                                if (pullRightProgressAtEnd > PullRightProgressAtStart)
-                                {
-                                    Console.WriteLine("Pulled Up");
-                                    ApplicationService.Instance.PullRight("up");
-                                }
-                                else
-                                {
-                                    Console.WriteLine("Pulled down");
-                                    ApplicationService.Instance.PullRight("down");
-                                }
-                            }
-                        }
                     }           
                 }
             }

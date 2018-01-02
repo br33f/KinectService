@@ -192,11 +192,37 @@ namespace KinectService.Control
             SendRequest(request);
         }
 
+        public void PullLeft(string direction)
+        {
+            Request request = new Request();
+            request.command = "PullLeft";
+            request.parameters = new Hashtable();
+            request.parameters.Add("direction", direction);
+            SendRequest(request);
+        }
+
+        public void PullCancel()
+        {
+            Request request = new Request();
+            request.command = "PullCancel";
+            request.parameters = new Hashtable();
+            SendRequest(request);
+        }
+
         public void Cross()
         {
             Request request = new Request();
             request.command = "Cross";
             request.parameters = new Hashtable();
+            SendRequest(request);
+        }
+
+        public void ChangeBrightness(float changeBy)
+        {
+            Request request = new Request();
+            request.command = "ChangeBrightness";
+            request.parameters = new Hashtable();
+            request.parameters.Add("changeBy", changeBy);
             SendRequest(request);
         }
 
