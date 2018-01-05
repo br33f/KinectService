@@ -73,7 +73,8 @@ namespace KinectService.Control
 
         private void InitializeOutputSocket()
         {
-            IPAddress ipAddress = Dns.Resolve("localhost").AddressList[0];
+            IPHostEntry ipHostEntry = Dns.GetHostByName(Dns.GetHostName());
+            IPAddress ipAddress = new IPAddress(ipHostEntry.AddressList[0].Address);
             this.OutputListener = new TcpListener(ipAddress, OUTPUT_SOCK_PORT);
             this.OutputListener.Start();
 
